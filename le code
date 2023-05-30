@@ -1,0 +1,628 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define CMAX 100
+
+int choix, x, y,g,h,z,b,d,l;
+
+struct Utilisateur
+{
+    char *nom;
+    char *adresse;
+    char *email;
+    int age;
+    char *phone;
+    struct Utilisateur *next;
+};
+
+struct Node
+{
+    struct Utilisateur *utilisateur;
+    struct Node *next;
+};
+
+struct Node *ajouterUtilisateur(struct Node *debut, char *nom, char *adresse, char *email, int age, char *phone)
+{
+    struct Utilisateur *nouvelUtilisateur = (struct Utilisateur *)malloc(sizeof(struct Utilisateur));
+    nouvelUtilisateur->nom = strdup(nom);
+    nouvelUtilisateur->adresse = strdup(adresse);
+    nouvelUtilisateur->email = strdup(email);
+    nouvelUtilisateur->age = age;
+    nouvelUtilisateur->phone = strdup(phone);
+
+    struct Node *nouveauNoeud = (struct Node *)malloc(sizeof(struct Node));
+
+    nouveauNoeud->utilisateur = nouvelUtilisateur;
+    nouveauNoeud->next = NULL;
+
+    if (debut == NULL)
+    {
+        debut = nouveauNoeud;
+    }
+    else
+    {
+        struct Node *temp = debut;
+        while (temp->next != NULL)
+        {
+            temp = temp->next;
+        }
+        temp->next = nouveauNoeud;
+    }
+
+    return debut;
+}
+
+void saisirNouvelUtilisateur(struct Node **debut)
+{
+    char nom[100];
+    char adresse[100];
+    char email[100];
+    int age;
+    char phone[100];
+
+    printf("Nom : ");
+    scanf("%s", nom);
+
+    printf("Age : ");
+    scanf("%d", &age);
+
+    printf("Telephone : ");
+    scanf("%s", phone);
+
+    printf("Adresse : ");
+    scanf("%s", adresse);
+
+    printf("Email : ");
+    scanf("%s", email);
+
+
+    *debut = ajouterUtilisateur(*debut, nom, adresse, email, age, phone);
+}
+
+void afficherUtilisateur(struct Utilisateur *utilisateur)
+{
+    printf("Nom : %s\n", utilisateur->nom);
+    printf("Age : %d\n", utilisateur->age);
+    printf("Téléphone : %s\n", utilisateur->phone);
+    printf("Adresse : %s\n", utilisateur->adresse);
+    printf("Email : %s\n", utilisateur->email);
+}
+void modifierUtilisateur(struct Node *debut, char *nom)
+{
+    struct Node *temp = debut;
+    while (temp != NULL)
+    {
+        if (strcmp(temp->utilisateur->nom, nom) == 0)
+        {
+            char adresse[100];
+            char email[100];
+            int age;
+            char phone[100];
+
+            printf("Nouvelle adresse : ");
+            scanf("%s", adresse);
+
+            printf("Nouvel email : ");
+            scanf("%s", email);
+
+            printf("Nouvel âge : ");
+            scanf("%d", &age);
+
+            printf("Nouveau téléphone : ");
+            scanf("%s", phone);
+
+            free(temp->utilisateur->adresse);
+            free(temp->utilisateur->email);
+            free(temp->utilisateur->phone);
+            temp->utilisateur->adresse = strdup(adresse);
+            temp->utilisateur->email = strdup(email);
+            temp->utilisateur->age = age;
+            temp->utilisateur->phone = strdup(phone);
+
+            printf("Informations mises à jour avec succès.\n");
+            return;
+        }
+        temp = temp->next;
+    }
+    printf("Utilisateur introuvable.\n");
+}
+
+
+
+struct Produit
+{
+    char nom[CMAX];
+    double poid;
+    int quantite;
+    char paysOrigine[CMAX];
+    char paysRecevoi[CMAX];
+    double prix;
+};
+
+struct node
+{
+    struct Produit *data;
+    struct node *next;
+};
+
+struct File
+{
+    struct node *front;
+    struct node *rear;
+};
+
+void ajouterProduit(struct File *file, struct Produit produit)
+{
+    struct node *nouveauNoeud = (struct node *)malloc(sizeof(struct node));
+    nouveauNoeud->data = (struct Produit *)malloc(sizeof(struct Produit));
+    *(nouveauNoeud->data) = produit;
+    nouveauNoeud->next = NULL;
+    if(true)
+    {
+        file->front = nouveauNoeud;
+        file->rear = nouveauNoeud;
+    }
+    else
+    {
+        file->rear->next = nouveauNoeud;
+        file->rear = nouveauNoeud;
+    }
+
+    printf("Le produit a ete ajoute avec succes.\n");
+}
+
+struct Produit saisirProduit()
+{
+    struct Produit nouveauProduit;
+    printf("Nom du produit : ");
+    scanf("%s", nouveauProduit.nom);
+    printf("Poids du produit : ");
+    scanf("%lf", &nouveauProduit.poid);
+    printf("Quantite : ");
+    scanf("%d", &nouveauProduit.quantite);
+    printf("Pays d'origine : ");
+    scanf("%s", nouveauProduit.paysOrigine);
+    printf("Prix unitaire: ");
+    scanf("%lf", &nouveauProduit.prix);
+    return nouveauProduit;
+}
+
+void afficherProduit(struct File *file)
+{
+    if (file->front == NULL)
+    {
+        printf("La file est vide.\n");
+        return;
+    }
+
+    struct node *current = file->front;
+
+    printf("les information de votre produit est  :\n");
+    while (current != NULL)
+    {
+        printf("Nom du produit : %s\n", current->data->nom);
+        printf("Poids du produit : %.2lf\n", current->data->poid);
+        printf("Quantite : %d\n", current->data->quantite);
+        printf("Pays d'origine : %s\n", current->data->paysOrigine);
+        printf("Prix : %.2lf\n", current->data->prix);
+        printf("--------------------\n");
+
+        current = current->next;
+    }
+}
+void modifierProduit(struct File *file)
+{
+    if (file->front == NULL)
+    {
+        printf("La file est vide. Impossible de modifier un produit.\n");
+        return;
+    }
+
+    char nomProduit[CMAX];
+    printf("Entrez le nom du produit que vous souhaitez modifier : ");
+    scanf("%s", nomProduit);
+
+    struct node *current = file->front;
+    while (current != NULL)
+    {
+        if (strcmp(current->data->nom, nomProduit) == 0)
+        {
+            printf("Nouvelles informations du produit :\n");
+            struct Produit nouveauProduit = saisirProduit();
+            *(current->data) = nouveauProduit;
+            printf("Le produit a ete modifie avec succes.\n");
+            return;
+        }
+        current = current->next;
+    }
+
+    printf("Le produit avec le nom '%s' n'a pas ete trouve.\n", nomProduit);
+}
+
+
+
+
+struct Responsable
+{
+    char Email[CMAX];
+    char MotsdePasse[CMAX];
+};
+
+int verifierResponsable(struct Responsable responsables[], int nombreResponsables, char email[], char motDePasse[])
+ {
+    for (int i = 0; i <nombreResponsables ; i++) {
+        if (strcmp(responsables[i].Email, email) == 0 && strcmp(responsables[i].MotsdePasse, motDePasse) == 0) {
+            return 1; 
+        }
+    }
+    return 0; 
+}
+int RESPONSABLES() 
+{
+    struct Responsable responsables[6];
+    int nombreResponsables = 6;
+
+    strcpy(responsables[0].Email, "MOURAD.SADemail.com");
+    strcpy(responsables[0].MotsdePasse, "140602");
+    strcpy(responsables[1].Email, "AHMED.SADemail.com");
+    strcpy(responsables[1].MotsdePasse, "150809");
+    strcpy(responsables[2].Email, "BASMA.SADemail.com");
+    strcpy(responsables[2].MotsdePasse, "180513");
+    strcpy(responsables[3].Email, "NIVINE.SADemail.com");
+    strcpy(responsables[3].MotsdePasse, "040475");
+    strcpy(responsables[4].Email, "SAFWA.SADemail.com");
+    strcpy(responsables[4].MotsdePasse, "270595");
+    strcpy(responsables[5].Email, "YASSINE.SADemail.com");
+    strcpy(responsables[5].MotsdePasse, "010793");
+	
+    char emailSaisi[CMAX];
+    char motDePasseSaisi[CMAX];
+
+    printf("Entrez votre email : ");
+    scanf("%s", emailSaisi);
+
+    printf("Entrez votre mot de passe : ");
+    scanf("%s", motDePasseSaisi);
+    
+	int a = verifierResponsable(responsables, nombreResponsables, emailSaisi, motDePasseSaisi);
+    if (a==1)
+	{
+		return 1;
+    } 
+	else
+	{
+        printf("Email ou mot de passe incorrect.\n");
+          return 0;
+   	}
+   	
+  
+}
+
+
+void menu();
+void sous_menu(int a);
+void util(int a, struct Node *debut,struct File *file);
+void Util(int a, struct Node *debut,struct File *file);
+void uTil(int a);
+void utIl(int a);
+void Choix(int a, struct Node *debut,struct File *file);
+void CHOIX(int a, struct Node *debut,struct File *file);
+void affiche(int a, struct Node *debut,struct File *file);
+void Prod(int a, struct Node *debut,struct File *file);
+void RESPAFFICH(int a, struct Node *debut,struct File *file);
+void Affichage(int a, struct Node *debut,struct File *file);
+void MODProd(int a,struct File *file);
+void MODPRod(int a,struct Node *debut,struct File *file);
+void InfoProd(int a, struct Node *debut,struct File *file);
+void ROU(int a, struct Node *debut,struct File *file);
+void menu()
+{
+    printf("bonjour \n");
+    printf("1- Responsable \n");
+    printf("2- Utilisateur \n");
+    printf("3- Condition \n");
+    printf("4- Contacter \n");
+    printf("choisir votre choix : ");
+    scanf("%d", &choix);
+    sous_menu(choix);
+}
+
+void sous_menu(int a)
+{
+	if(a==1)
+	{
+		printf("1-Conecter \n");
+		printf("2-Retourner \n");
+		printf("choisir votre choix : ");
+        scanf("%d", &x);
+        util(x,NULL,NULL);
+	}
+    else if (a == 2)
+    {
+        printf("1- Ajouter un nouvel compte \n");
+        printf("2- Retourner \n");
+        printf("choisir votre choix : ");
+        scanf("%d", &x);
+        Util(x,NULL,NULL);
+    }
+    else if (a == 3)
+    {
+        printf("Cette application est soumise aux exigences du Code des Douanes et Accises . ");
+        printf("Il a été approuvé par le décret royal en tant que loi n ° 1.77.339 . ");
+        printf("Le 25 Shawwal 1397 (9 octobre 1977), il fut notamment modifié et complété . ");
+        printf("Conformément à la loi n° 99.02 approuvée par le Dahir N° 1-00-222 du 2 Rabi` al-Awwal 1421 (5 juin 2000).\n");
+        printf("1- Retourner ");
+        scanf("%d", &x);
+        uTil(x);
+    }
+    else if (a == 4)
+    {
+        printf("contactez-nous sur notre email SADoaneFP@gmail.com pu dur nootre telephone 0646378237 \n");
+        printf("1- Retourner");
+        scanf("%d", &x);
+        utIl(x);
+    }
+    else
+    {
+        printf("choix invalide \n");
+        printf("choisir votre choix : ");
+        scanf("%d", &x);
+    }
+}
+void util(int a,struct Node *debut,struct File *file)
+{
+	if(a==1)
+	{
+		int r=0;
+		do
+		{
+   			r=RESPONSABLES();
+		}
+		while( r==0 );
+		printf("1-Entrer \n");
+		printf("2- Retourner \n");
+		printf("choisir votre choix : ");
+		scanf("%d",&g);
+		Choix(g,debut,file);
+	}
+	else if (a==2)
+	{
+		menu();
+	}
+	else
+    {
+        printf("choix invalide \n");
+        printf("choisir votre choix : ");
+        scanf("%d", &g);
+    }
+}
+void Util(int a, struct Node *debut,struct File *file)
+{
+    if (a == 1)
+    {
+        struct Node *debut = NULL;
+        saisirNouvelUtilisateur(&debut);
+        printf("1- Ajouter \n");
+        printf("2- Retourner  \n");
+        printf("Choisir votre choix : ");
+        scanf("%d", &y);
+        CHOIX(y, debut,file);
+    }
+    else if(a==2)
+    {
+    	menu();
+	}
+    else
+    {
+        printf("choix invalide \n");
+        printf("choisir votre choix : ");
+        scanf("%d", &y);
+    }
+}
+void uTil(int a)
+{
+	if (a==1)
+	{
+		menu();
+	}
+}
+void utIl(int a)
+{
+	if(a==1)
+	{
+		menu();
+	}
+}
+void Choix(int a,struct Node *debut,struct File *file)
+{
+	if(a==1)
+	{
+		printf("Le message de vérification sera envoyé a l'email de l'utilisateur ,indiquant la raison en cas de rejet du demande \n");
+		printf("1-Afficher les information du utilisateur \n");
+        printf("2-Aficher les informmation du produit \n");
+        printf("3-Retourner \n");
+        printf("Choisir votre choix ");
+        scanf("%d",&h);
+        affiche(h,debut,file);
+        
+	}
+	else if(a==2)
+	{
+		menu();
+	}
+	else
+    {
+        printf("choix invalide \n");
+        printf("choisir votre choix : ");
+        scanf("%d", &h);
+    }
+}
+void CHOIX(int a, struct Node *debut,struct File *file)
+{
+    if (a == 1)
+    {
+        printf("1-Afficher votre information \n");
+        printf("2-Modifier votre information \n");
+        printf("3-Entrer votre demande \n");
+        printf("4-Retourner \n");
+        printf("choisir un nombre ");
+        scanf("%d", &z);
+        Prod(z, debut,file);
+    }
+    else if (a==2)
+    {
+    	menu();
+	}
+    else
+    {
+        printf("choix invalide \n");
+        printf("choisir votre choix : ");
+        scanf("%d", &z);
+    }
+}
+
+void affiche(int a,struct Node *debut,struct File *file)
+{
+	if(a==1)
+	{
+		afficherUtilisateur(debut->utilisateur);
+	}
+	else if (a==2)
+	{
+		afficherProduit(file);
+	}
+	else if(a==3)
+	{
+		menu();
+	}
+}
+
+void Prod(int a, struct Node *debut,struct File *file)
+{
+    if (a == 1)
+    {
+    	printf("votre information sont");
+        afficherUtilisateur(debut->utilisateur);
+        printf("1-Retourner ");
+        scanf("%d",&b);
+        ROU(b,debut,file);
+    }
+    else if (a==2)
+	{
+		char nom[100];
+        printf("Nom de l'utilisateur à modifier : ");
+        scanf("%s", nom);
+        modifierUtilisateur(debut, nom);
+        printf("1- afficher votre information");
+        printf("2-Retourner");
+        scanf("%d", &b);
+        Affichage(b,debut,file);
+	}
+
+    else if (a == 3)
+    {
+        printf("Saisir les informations du produit\n");
+		struct Produit nouveauProduit = saisirProduit();
+        ajouterProduit(file, nouveauProduit);
+    	printf("1- Ajouter \n");
+    	printf("2- Retourner \n");
+    	printf("Choisir votre choix ");
+    	scanf("%d", &b);
+    	InfoProd(b,debut,file);  
+    }
+    else if(a==4)
+    {
+    	menu();
+	}
+	else
+	{
+        printf("choix invalide \n");
+        printf("choisir votre choix : ");
+        scanf("%d", &d);
+    }
+}
+void ROU(int a, struct Node *debut,struct File *file)
+{
+	if(a==1)
+	{
+		 CHOIX(y, debut,file);
+	}
+		else
+    {
+        printf("choix invalide \n");
+        printf("choisir votre choix : ");
+        scanf("%d", &d);
+    }
+}
+void InfoProd(int a, struct Node *debut,struct File *file)
+{
+	if(a==1)
+	{
+		printf("le message de validation a votre demande vous sera envoyé par e-mail");
+		printf("1-Afficher votre Produit \n");
+        printf("2-Modifier votre Produit \n");
+        printf("choisir un nombre");
+        scanf("%d", &d);
+        MODProd(d,file);
+	}
+	else if(a==2)
+	{
+		printf("1-Retourner au page principale \n");
+        printf("2-Retourner au page precedente \n");
+        printf("choisir un nombre");
+        scanf("%d", &d);
+        MODPRod(d,debut,file);	
+	}
+	else
+    {
+        printf("choix invalide \n");
+        printf("choisir votre choix : ");
+        scanf("%d", &d);
+    }
+}
+void MODPRod(int a, struct Node *debut,struct File *file )
+{
+	if(a==1)
+	{
+		menu();
+	}
+	else if(a==2)
+	{
+		 CHOIX(y, debut,file);
+	}
+}
+void MODProd(int a, struct File *file)
+{
+	if(a==1)
+	{
+		afficherProduit(file);
+	}
+	else if(a==2)
+	{
+		modifierProduit(file);
+	}
+}
+void Affichage(int a, struct Node *debut,struct File *file)
+{
+	if(a==1)
+	{
+		afficherUtilisateur(debut->utilisateur);
+    }
+    else if (a==2)
+    {
+    	 CHOIX(y, debut,file);
+	}
+}
+
+int main()
+{
+	struct Node *debut = NULL;
+
+    struct File *file= (struct File*)malloc(sizeof(struct File));
+    file->front = NULL;
+    file->rear = NULL;
+    
+    menu();
+    
+    return 0;
+}
